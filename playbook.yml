@@ -1,0 +1,51 @@
+---
+- hosts: azure
+  become: true
+
+  tasks:
+    - name: Instalar aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+
+    - name: Instalar paquetes necesarios
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu jammy stable
+        state: present
+
+    - name: Instalar Docker
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+
+    - name: Instalar modulo de docker
+      pip:
+        name: docker
+
+    - name: Iniciar contenedor aplicacion
+      docker_container:
+        name: app1  # Nombre del contenedor
+        image: kevtamariz/socialmedia:client.v1.0.0  # Nombre de la imagen Docker
+        state: started       # Estado: started (iniciar) o absent (detener/eliminar)
+        ports:
+          - "3000:3000"           # Mapeo de puertos (puerto de la máquina host:puerto del contenedor)

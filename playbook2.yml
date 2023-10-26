@@ -1,0 +1,12 @@
+---
+- hosts: azure
+  become: true
+
+  tasks:
+    - name: Iniciar contenedor aplicacion
+      docker_container:
+        name: app2  # Nombre del contenedor
+        image: kevtamariz/cinemaplus:client.v2.7  # Nombre de la imagen Docker
+        state: started       # Estado: started (iniciar) o absent (detener/eliminar)
+        ports:
+          - "3000:3000"           # Mapeo de puertos (puerto de la máquina host:puerto del contenedor)
